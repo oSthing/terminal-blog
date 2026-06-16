@@ -1,0 +1,59 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import TableOfContents from '@components/TableOfContents.astro';
+import { type CollectionEntry } from 'astro:content';
+import { SITE } from '../consts';
+
+interface Props {
+  entry: CollectionEntry<'blog'>;
+  headings: { depth: number; slug: string; text: string }[];
+}
+
+const { entry, headings } = Astro.props;
+const { data } = entry;
+
+const minutesRead = Math.max(1, Math.round(entry.body.split(/\s+/).length / 220));
+const dateFormatted = data.pubDate.toLocaleDateString(SITE.locale, {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BaseLayout title={data.title} description={data.description}>
+  <article class="mx-auto w-full max-w-5xl px-6 py-16">
+    <header class="mb-12 border-b border-border-light dark:border-border-dark pb-8">
+      <div class="mb-3 flex items-center gap-2 text-sm text-muted-light dark:text-muted-dark">
+        <time datetime={data.pubDate.toISOString()}>{dateFormatted}</time>
+        <span aria-hidden="true">·</span>
+        <span>{minutesRead} min read</span>
+      </div>
+      <h1 class="text-4xl font-semibold tracking-tight md:text-5xl">{data.title}</h1>
+      <p class="mt-4 text-lg text-muted-light dark:text-muted-dark">{data.description}</p>
+      {
+        data.tags.length > 0 && (
+          <div class="mt-4 flex flex-wrap gap-2">
+            {data.tags.map((tag) => (
+              <span class="rounded-full border border-border-light dark:border-border-dark px-2.5 py-0.5 text-xs">
+                {tag}
+              </span>
+            ))}
+          </div>
+        )
+      }
+    </header>
+
+    <div class="grid gap-12 md:grid-cols-[minmax(0,1fr)_240px]">
+      <div class="prose prose-neutral dark:prose-invert max-w-none">
+        <slot />
+      </div>
+      <aside class="hidden md:block">
+        <TableOfContents headings={headings} />
+      </aside>
+    </div>
+
+    <footer class="mt-16 border-t border-border-light dark:border-border-dark pt-8 text-sm text-muted-light dark:text-muted-dark">
+      <a href="/blog" class="hover:text-fg-light dark:hover:text-fg-dark">← back to blog</a>
+    </footer>
+  </article>
+</BaseLayout>

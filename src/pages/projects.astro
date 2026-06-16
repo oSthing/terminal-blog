@@ -1,0 +1,50 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+const projects = [
+  {
+    name: 'terminal-blog',
+    description: "this site. astro + plain html terminal. content-first personal blog for oSthing's writing.",
+    tags: ['astro', 'typescript', 'terminal'],
+    href: 'https://github.com/oSthing/terminal-blog',
+  }
+];
+---
+
+<BaseLayout title="projects" description="selected projects">
+  <section class="mx-auto w-full max-w-3xl px-6 py-16">
+    <header class="mb-12">
+      <p class="font-mono text-xs uppercase tracking-wider text-muted-light dark:text-muted-dark">
+        /projects
+      </p>
+      <h1 class="mt-2 text-4xl font-semibold tracking-tight">projects</h1>
+      <p class="mt-3 text-muted-light dark:text-muted-dark">
+        things I've built or maintained. the source for most of these is on github.
+      </p>
+    </header>
+
+    <ul class="divide-y divide-border-light dark:divide-border-dark border-y border-border-light dark:border-border-dark">
+      {
+        projects.map((project) => (
+          <li class="py-6">
+            <div class="flex items-baseline justify-between gap-4">
+              <h2 class="text-lg font-semibold tracking-tight">
+                <a href={project.href} class="hover:underline" rel="noopener noreferrer" target="_blank">
+                  {project.name}
+                </a>
+              </h2>
+              <div class="flex flex-wrap gap-1.5">
+                {project.tags.map((tag) => (
+                  <span class="rounded-full border border-border-light dark:border-border-dark px-2 py-0.5 text-xs">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <p class="mt-2 text-muted-light dark:text-muted-dark">{project.description}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>

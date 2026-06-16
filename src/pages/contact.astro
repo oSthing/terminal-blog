@@ -1,0 +1,37 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { SITE } from '../consts';
+---
+
+<BaseLayout title="contact" description="get in touch">
+  <section class="mx-auto w-full max-w-3xl px-6 py-16">
+    <header class="mb-10">
+      <p class="font-mono text-xs uppercase tracking-wider text-muted-light dark:text-muted-dark">
+        /contact
+      </p>
+      <h1 class="mt-2 text-4xl font-semibold tracking-tight">contact</h1>
+      <p class="mt-3 text-muted-light dark:text-muted-dark">
+        {SITE.tagline} 邮箱是最快的方式；想聊长一点的，开个 GitHub issue 也行。
+      </p>
+    </header>
+
+    <dl class="divide-y divide-border-light dark:divide-border-dark border-y border-border-light dark:border-border-dark">
+      <div class="grid grid-cols-[120px_1fr] gap-4 py-4">
+        <dt class="font-mono text-xs uppercase tracking-wider text-muted-light dark:text-muted-dark">email</dt>
+        <dd><a href={`mailto:${SITE.email}`} class="hover:underline">{SITE.email}</a></dd>
+      </div>
+      <div class="grid grid-cols-[120px_1fr] gap-4 py-4">
+        <dt class="font-mono text-xs uppercase tracking-wider text-muted-light dark:text-muted-dark">qq</dt>
+        <dd><span class="font-mono">{SITE.qq}</span></dd>
+      </div>
+      <div class="grid grid-cols-[120px_1fr] gap-4 py-4">
+        <dt class="font-mono text-xs uppercase tracking-wider text-muted-light dark:text-muted-dark">github</dt>
+        <dd><a href={SITE.github} class="hover:underline" rel="noopener noreferrer" target="_blank">{SITE.github}</a></dd>
+      </div>
+      <div class="grid grid-cols-[120px_1fr] gap-4 py-4">
+        <dt class="font-mono text-xs uppercase tracking-wider text-muted-light dark:text-muted-dark">rss</dt>
+        <dd><a href="/rss.xml" class="hover:underline">/rss.xml</a></dd>
+      </div>
+    </dl>
+  </section>
+</BaseLayout>

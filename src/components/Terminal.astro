@@ -1,0 +1,109 @@
+---
+/**
+ * Terminal — LiveTerm-style plain HTML terminal.
+ *
+ * No xterm.js. A real <input> for typing, a scrollable <div> for
+ * history, and a tiny ANSI-to-HTML converter keep the colour codes
+ * produced by `commands.ts`. Input is auto-focused and re-focused on
+ * any click within the card; the global keydown listener reclaims
+ * focus if the user has typed elsewhere on the page.
+ */
+import { getCollection } from 'astro:content';
+import { SITE } from '../consts';
+import type { PostSummary } from '../scripts/commands';
+import { friends } from '../data/friends';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).map(
+  (entry): PostSummary => ({
+    slug: entry.slug,
+    title: entry.data.title,
+    description: entry.data.description,
+    pubDate: entry.data.pubDate.toISOString(),
+    tags: entry.data.tags,
+    body: entry.body,
+  }),
+);
+
+const sortedPosts = posts.sort(
+  (a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime(),
+);
+
+const lightweightPosts: PostSummary[] = sortedPosts.map((p) => ({
+  ...p,
+  body: p.body.length > 2000 ? p.body.slice(0, 2000) : p.body,
+}));
+---
+
+<section class="mx-auto w-full max-w-5xl px-6 py-10 md:py-16">
+  <div class="terminal-host shadow-sm">
+    <div class="terminal-titlebar">
+      <span class="terminal-dot"></span>
+      <span class="terminal-dot"></span>
+      <span class="terminal-dot"></span>
+      <span class="ml-3 font-mono text-xs text-muted-light dark:text-muted-dark">
+        oSthing@oSthing: ~ — bash
+      </span>
+      <span class="ml-auto font-mono text-xs text-muted-light dark:text-muted-dark">
+        Ciallo～(∠・ω&lt; )⌒☆
+      </span>
+    </div>
+    <div
+      id="terminal-host"
+      class="terminal-body h-[460px] md:h-[560px] overflow-y-auto px-4 py-3 font-mono text-sm"
+      data-posts={JSON.stringify(lightweightPosts)}
+      data-friends={JSON.stringify(friends)}
+    >
+      <div id="terminal-output" class="terminal-output" aria-live="polite"></div>
+      <form id="terminal-form" class="terminal-form" autocomplete="off">
+        <span id="terminal-prompt" class="terminal-prompt"></span>
+        <input
+          id="terminal-input"
+          type="text"
+          autocomplete="off"
+          autocapitalize="off"
+          autocorrect="off"
+          spellcheck="false"
+          autofocus
+          class="terminal-input"
+          aria-label="terminal input"
+        />
+      </form>
+    </div>
+  </div>
+
+  <div class="mt-8 grid gap-3 text-sm text-muted-light dark:text-muted-dark md:grid-cols-3">
+    <div>
+      <span class="font-mono text-xs uppercase tracking-wider">type</span>
+      <code class="ml-2 font-mono">help</code>
+      <span class="ml-1">to list commands</span>
+    </div>
+    <div>
+      <span class="font-mono text-xs uppercase tracking-wider">read</span>
+      <code class="ml-2 font-mono">blog</code>
+      <span class="ml-1">for posts</span>
+    </div>
+    <div>
+      <span class="font-mono text-xs uppercase tracking-wider">find</span>
+      <code class="ml-2 font-mono">search &lt;term&gt;</code>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { mountTerminal } from '../scripts/terminal';
+
+  const host = document.getElementById('terminal-host');
+  if (host instanceof HTMLElement) {
+    const rawPosts = host.dataset.posts ?? '[]';
+    const rawFriends = host.dataset.friends ?? '[]';
+    let posts: unknown = [];
+    let friends: unknown = [];
+    try { posts = JSON.parse(rawPosts); } catch { posts = []; }
+    try { friends = JSON.parse(rawFriends); } catch { friends = []; }
+    mountTerminal(
+      host,
+      posts as Parameters<typeof mountTerminal>[1],
+      friends as Parameters<typeof mountTerminal>[2],
+    );
+  }
+</script>
