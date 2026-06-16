@@ -23,3 +23,9 @@ pnpm-debug.log*
 
 # astro
 .astro/
+
+CLAUDE.md
+DESIGN.md
+FEATURES.md
+PROJECT.md
+deploy.ps1
