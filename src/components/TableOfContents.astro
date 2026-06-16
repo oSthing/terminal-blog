@@ -1,0 +1,33 @@
+---
+interface Props {
+  headings: { depth: number; slug: string; text: string }[];
+}
+
+const { headings } = Astro.props;
+const toc = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+---
+
+{
+  toc.length > 0 && (
+    <nav class="sticky top-24 text-sm">
+      <p class="mb-3 font-mono text-xs uppercase tracking-wider text-muted-light dark:text-muted-dark">
+        on this page
+      </p>
+      <ul class="space-y-2 border-l border-border-light dark:border-border-dark">
+        {toc.map((h) => (
+          <li>
+            <a
+              href={`#${h.slug}`}
+              class:list={[
+                '-ml-px block border-l border-transparent pl-4 transition-colors hover:border-fg-light dark:hover:border-fg-dark hover:text-fg-light dark:hover:text-fg-dark',
+                h.depth === 3 ? 'ml-3 text-xs text-muted-light dark:text-muted-dark' : '',
+              ]}
+            >
+              {h.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}

@@ -1,0 +1,17 @@
+---
+import { SITE } from '../consts';
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-border-light dark:border-border-dark">
+  <div class="mx-auto flex w-full max-w-6xl flex-col items-start justify-between gap-3 px-6 py-8 text-sm text-muted-light dark:text-muted-dark md:flex-row md:items-center">
+    <p>
+      © {year} {SITE.author}. built with Astro.
+    </p>
+    <p class="font-mono text-xs">
+      <a href="/rss.xml" class="hover:text-fg-light dark:hover:text-fg-dark">rss</a>
+      <span class="mx-2 opacity-50">·</span>
+      <a href="/sitemap.xml" class="hover:text-fg-light dark:hover:text-fg-dark">sitemap</a>
+    </p>
+  </div>
+</footer>

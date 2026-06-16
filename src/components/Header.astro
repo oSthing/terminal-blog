@@ -1,0 +1,65 @@
+---
+import { SITE, NAV, SOCIAL } from '../consts';
+import ThemeToggle from './ThemeToggle.astro';
+
+interface Props {
+  showTerminalLink?: boolean;
+}
+
+const { showTerminalLink = false } = Astro.props;
+const path = Astro.url.pathname;
+---
+
+<header class="border-b border-border-light dark:border-border-dark sticky top-0 z-30 bg-bg-light/80 dark:bg-bg-dark/80 backdrop-blur">
+  <div class="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
+    <a href="/" class="flex items-center gap-2 font-mono text-sm font-medium tracking-tight">
+      <span class="inline-flex h-2 w-2 rounded-full bg-accent-light dark:bg-accent-dark"></span>
+      <span>{SITE.title.toLowerCase()}</span>
+    </a>
+
+    <nav class="hidden md:flex items-center gap-1 text-sm">
+      {
+        NAV.map((item) => {
+          const active = item.href === '/' ? path === '/' : path.startsWith(item.href);
+          return (
+            <a
+              href={item.href}
+              class:list={[
+                'rounded-md px-3 py-1.5 transition-colors',
+                active
+                  ? 'text-fg-light dark:text-fg-dark'
+                  : 'text-muted-light dark:text-muted-dark hover:text-fg-light dark:hover:text-fg-dark',
+              ]}
+            >
+              {item.label}
+            </a>
+          );
+        })
+      }
+    </nav>
+
+    <div class="flex items-center gap-2 text-sm text-muted-light dark:text-muted-dark">
+      {
+        SOCIAL.map((item) => (
+          <a
+            href={item.href}
+            rel="noopener noreferrer"
+            target={item.href.startsWith('http') ? '_blank' : undefined}
+            class="rounded-md px-2 py-1 hover:text-fg-light dark:hover:text-fg-dark"
+          >
+            {item.label}
+          </a>
+        ))
+      }
+      <ThemeToggle />
+    </div>
+  </div>
+
+  {
+    showTerminalLink && (
+      <div class="mx-auto w-full max-w-6xl px-6 pb-3 text-xs text-muted-light dark:text-muted-dark">
+        <a href="/" class="hover:text-fg-light dark:hover:text-fg-dark">→ launch terminal</a>
+      </div>
+    )
+  }
+</header>
