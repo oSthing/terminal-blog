@@ -12,6 +12,7 @@
 import { VirtualFileSystem, type FsDirectory } from './filesystem';
 import { terminalStore } from './store';
 import { run, type PostSummary } from './commands';
+import { getCandidates, getCurrentWord, commonPrefix } from './completion';
 import type { Friend } from '../data/friends';
 
 // ---------------------------------------------------------------------------
@@ -289,6 +290,29 @@ export function mountTerminal(host: HTMLElement, posts: PostSummary[], friends: 
         input.value = hist[historyIndex] ?? '';
       }
       moveCaretToEnd(input);
+    } else if (ev.key === 'Tab') {
+      ev.preventDefault();
+      const candidates = getCandidates({ input: input!.value, ctx });
+      if (candidates.length === 0) return;
+
+      const { word, wordStart } = getCurrentWord(input!.value);
+
+      if (candidates.length === 1) {
+        input!.value = input!.value.slice(0, wordStart) + candidates[0];
+        moveCaretToEnd(input!);
+        return;
+      }
+
+      const prefix = commonPrefix(candidates);
+      if (prefix.length > word.length) {
+        input!.value = input!.value.slice(0, wordStart) + prefix;
+        moveCaretToEnd(input!);
+      } else {
+        // Already at the common prefix — list the candidates.
+        // Match the muted `color()` style from commands.ts (SGR 38;5;245).
+        writeRaw(`\x1b[38;5;245m${candidates.join('  ')}\x1b[0m`);
+        scrollToBottom();
+      }
     } else if (ev.ctrlKey && (ev.key === 'l' || ev.key === 'L')) {
       ev.preventDefault();
       output!.innerHTML = '';
